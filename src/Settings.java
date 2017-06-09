@@ -1,5 +1,3 @@
-package wol;
-
 public class Settings {
 	
 	final static int winx = 500;

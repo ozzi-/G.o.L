@@ -1,5 +1,3 @@
-package wol;
-
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 

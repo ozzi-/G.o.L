@@ -1,26 +1,15 @@
-package wol;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.image.ImageObserver;
-import java.text.AttributedCharacterIterator;
 
-import javax.swing.JFrame;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
-import javax.swing.JLabel;
 
 public class Wol {
 	private JFrame frame;
@@ -48,6 +37,7 @@ public class Wol {
 			if (running || next) {
 				next = false;
 				System.out.println("TICK");
+				worldCanvas.repaint();
 				// DO THE SIM
 				//worldCanvas.update(g);
 			}

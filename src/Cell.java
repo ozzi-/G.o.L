@@ -1,5 +1,3 @@
-package wol;
-
 public class Cell {
 	private int posx;
 	private int posy;
