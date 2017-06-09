@@ -13,7 +13,9 @@ import javax.swing.JScrollBar;
 
 public class Wol {
 	private JFrame frame;
-	private World world;
+	private static World world;
+	private int countx;
+	private int county;
 	private static WolCanvas worldCanvas;
 	private static boolean running = false;
 	private static boolean next = false;
@@ -31,27 +33,72 @@ public class Wol {
 				}
 			}
 		});
-
+		long sleepTime = 0;
+		long lastSimTime = 0;
 		while (true) {
 			long preSimTime = System.currentTimeMillis();
-			if (running || next) {
+			if ((running || next) && preSimTime > lastSimTime + sleepTime) {
 				next = false;
-				System.out.println("TICK");
+				lastSimTime = System.currentTimeMillis();
+				System.out.println("TICK------------------------");
 				worldCanvas.repaint();
-				// DO THE SIM
-				//worldCanvas.update(g);
+				
+				for (int x = 0; x < world.getWorldWidth(); x++) {
+					for (int y = 0; y < world.getWorldHeight(); y++) {
+						
+						Cell c = world.inhabitants[x][y];
+						int aliveNeighbours = 0 ;
+
+						Cell n = world.getBound(x,y-1);
+						Cell e = world.getBound(x-1,y);
+						Cell s = world.getBound(x,y+1);
+						Cell w = world.getBound(x+1,y);
+
+						Cell ne = world.getBound(x-1,y-1);
+						Cell nw = world.getBound(x+1,y-1);
+						
+						Cell sw = world.getBound(x+1,y+1);
+						Cell se = world.getBound(x-1,y+1);
+						
+						aliveNeighbours+=nw.isAlive()?1:0;
+						aliveNeighbours+=n.isAlive()?1:0;
+						aliveNeighbours+=ne.isAlive()?1:0;
+						aliveNeighbours+=w.isAlive()?1:0;
+						aliveNeighbours+=e.isAlive()?1:0;
+						aliveNeighbours+=s.isAlive()?1:0;
+						aliveNeighbours+=sw.isAlive()?1:0;
+						aliveNeighbours+=se.isAlive()?1:0;
+						
+					
+						if(!c.isAlive() && aliveNeighbours==3){
+							c.resurrect();
+						}else if(c.isAlive() && aliveNeighbours<2){
+							c.kill();
+						}else if(c.isAlive() && (aliveNeighbours == 2 || aliveNeighbours == 3)){
+							c.resurrect();
+						}else if (c.isAlive() && aliveNeighbours > 3){
+							c.kill();
+						}
+					}
+				}
+				
+			
 			}
 			long afterSimTime = System.currentTimeMillis();
 			long executionSimTime = afterSimTime - preSimTime;
-			long sleepTime = Settings.simTime - executionSimTime;
+			sleepTime = Settings.simTime - executionSimTime;
 			sleepTime = sleepTime < 1 ? 1 : sleepTime;
-			Thread.sleep(sleepTime);
+			Thread.sleep(20);
 		}
 
 	}
 
 	public Wol() {
-		world = new World(Settings.winx, Settings.winy);
+
+		countx = (int) (Settings.winx / Settings.lwidth) - 1;
+		county = (int) (Settings.winy / Settings.lheight) - 1;
+
+		world = new World(countx, county);
 		initialize();
 
 	}
@@ -61,9 +108,6 @@ public class Wol {
 		frame.setSize(Settings.winx, Settings.winy);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
-
-		int countx = (int) (Settings.winx / Settings.lwidth) - 1;
-		int county = (int) (Settings.winy / Settings.lheight) - 1;
 
 		worldCanvas = new WolCanvas(world, Settings.winx, Settings.winy, countx, county);
 		frame.getContentPane().add(worldCanvas, BorderLayout.CENTER);
@@ -76,6 +120,7 @@ public class Wol {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				world.bearRandom(50);
+				worldCanvas.repaint();
 			}
 		});
 		panel.add(btn_spawn);
@@ -84,7 +129,11 @@ public class Wol {
 		btn_kill.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				world.inhabitants.clear();
+				for (int x = 0; x < world.getWorldWidth(); x++) {
+					for (int y = 0; y < world.getWorldHeight(); y++) {
+						world.inhabitants[x][y].kill();
+					}
+				}
 			}
 		});
 		panel.add(btn_kill);

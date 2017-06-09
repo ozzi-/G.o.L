@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Cell {
 	private int posx;
 	private int posy;
@@ -6,7 +8,7 @@ public class Cell {
 	public Cell(int posx, int posy) {
 		this.setPosx(posx);
 		this.setPosy(posy);
-		alive = true;
+		alive = false;
 	}
 
 	public int getPosx() {
@@ -36,4 +38,6 @@ public class Cell {
 	public void kill() {
 		this.alive = false;
 	}
+
+
 }
