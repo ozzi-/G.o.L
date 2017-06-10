@@ -28,6 +28,9 @@ public class GoL {
 	private static boolean running = false;
 	private static boolean next = false;
 	private static GoL window;
+	private static long sleepTime = 0;
+	private static long lastSimTime = 0;
+
 
 	public static void main(String[] args) throws InterruptedException {
 		EventQueue.invokeLater(new Runnable() {
@@ -41,8 +44,6 @@ public class GoL {
 				}
 			}
 		});
-		long sleepTime = 0;
-		long lastSimTime = 0;
 		while (true) {
 			long preSimTime = System.currentTimeMillis();
 			if ((running || next) && preSimTime > lastSimTime + sleepTime) {
@@ -136,6 +137,8 @@ public class GoL {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				next = true;
+				lastSimTime = System.currentTimeMillis();
+				sleepTime=0;
 			}
 		});
 		panel.add(btn_next);
