@@ -1,9 +1,8 @@
-import java.util.ArrayList;
-
 public class Cell {
 	private int posx;
 	private int posy;
 	private boolean alive;
+	private boolean aliveNextRound;
 
 	public Cell(int posx, int posy) {
 		this.setPosx(posx);
@@ -32,12 +31,23 @@ public class Cell {
 	}
 
 	public void resurrect() {
-		this.alive = true;
+		alive = true;
 	}
 
 	public void kill() {
-		this.alive = false;
+		alive = false;
 	}
 
+	public void killNextRound() {
+		aliveNextRound=false;
+	}
+
+	public void resurrectNextRound() {
+		aliveNextRound=true;		
+	}
+
+	public void liveRound(){
+		alive = aliveNextRound;
+	}
 
 }

@@ -1,10 +1,10 @@
 public class Settings {
 	
-	final static int winx = 500;
-	final static int winy = 500;
+	static int winx = 800;
+	static int winy = 800;
 
-	final static int lwidth = 10;
-	final static int lheight = 10;
+	static int lwidth = 10;
+	static int lheight = 10;
 	static long simTime = 1000;
 
 }

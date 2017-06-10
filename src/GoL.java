@@ -1,9 +1,13 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 
-public class Wol {
+public class GoL {
 	private JFrame frame;
 	private static World world;
 	private int countx;
@@ -19,14 +23,14 @@ public class Wol {
 	private static WolCanvas worldCanvas;
 	private static boolean running = false;
 	private static boolean next = false;
-	private static Wol window;
+	private static GoL window;
 
 	public static void main(String[] args) throws InterruptedException {
 		EventQueue.invokeLater(new Runnable() {
 
 			public void run() {
 				try {
-					window = new Wol();
+					window = new GoL();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -40,49 +44,55 @@ public class Wol {
 			if ((running || next) && preSimTime > lastSimTime + sleepTime) {
 				next = false;
 				lastSimTime = System.currentTimeMillis();
-				System.out.println("TICK------------------------");
 				worldCanvas.repaint();
-				
+
 				for (int x = 0; x < world.getWorldWidth(); x++) {
 					for (int y = 0; y < world.getWorldHeight(); y++) {
-						
+
 						Cell c = world.inhabitants[x][y];
-						int aliveNeighbours = 0 ;
+						int aliveNeighbours = 0;
 
-						Cell n = world.getBound(x,y-1);
-						Cell e = world.getBound(x-1,y);
-						Cell s = world.getBound(x,y+1);
-						Cell w = world.getBound(x+1,y);
+						Cell n = world.getBound(x, y - 1);
+						Cell e = world.getBound(x + 1, y);
+						Cell s = world.getBound(x, y + 1);
+						Cell w = world.getBound(x - 1, y);
 
-						Cell ne = world.getBound(x-1,y-1);
-						Cell nw = world.getBound(x+1,y-1);
-						
-						Cell sw = world.getBound(x+1,y+1);
-						Cell se = world.getBound(x-1,y+1);
-						
-						aliveNeighbours+=nw.isAlive()?1:0;
-						aliveNeighbours+=n.isAlive()?1:0;
-						aliveNeighbours+=ne.isAlive()?1:0;
-						aliveNeighbours+=w.isAlive()?1:0;
-						aliveNeighbours+=e.isAlive()?1:0;
-						aliveNeighbours+=s.isAlive()?1:0;
-						aliveNeighbours+=sw.isAlive()?1:0;
-						aliveNeighbours+=se.isAlive()?1:0;
-						
-					
-						if(!c.isAlive() && aliveNeighbours==3){
-							c.resurrect();
-						}else if(c.isAlive() && aliveNeighbours<2){
-							c.kill();
-						}else if(c.isAlive() && (aliveNeighbours == 2 || aliveNeighbours == 3)){
-							c.resurrect();
-						}else if (c.isAlive() && aliveNeighbours > 3){
-							c.kill();
+						Cell ne = world.getBound(x + 1, y - 1);
+						Cell nw = world.getBound(x - 1, y - 1);
+
+						Cell sw = world.getBound(x - 1, y + 1);
+						Cell se = world.getBound(x + 1, y + 1);
+
+						aliveNeighbours += nw.isAlive() ? 1 : 0;
+						aliveNeighbours += n.isAlive() ? 1 : 0;
+						aliveNeighbours += ne.isAlive() ? 1 : 0;
+						aliveNeighbours += w.isAlive() ? 1 : 0;
+						aliveNeighbours += e.isAlive() ? 1 : 0;
+						aliveNeighbours += s.isAlive() ? 1 : 0;
+						aliveNeighbours += sw.isAlive() ? 1 : 0;
+						aliveNeighbours += se.isAlive() ? 1 : 0;
+
+						if (c.isAlive()) {
+							if (!(aliveNeighbours == 2 || aliveNeighbours == 3)) {
+								c.killNextRound();
+							} else {
+								c.resurrectNextRound();
+							}
+						} else {
+							if (aliveNeighbours == 3) {
+								c.resurrectNextRound();
+							}
 						}
+
 					}
 				}
-				
-			
+
+				for (int x = 0; x < world.getWorldWidth(); x++) {
+					for (int y = 0; y < world.getWorldHeight(); y++) {
+						world.inhabitants[x][y].liveRound();
+					}
+				}
+
 			}
 			long afterSimTime = System.currentTimeMillis();
 			long executionSimTime = afterSimTime - preSimTime;
@@ -93,7 +103,7 @@ public class Wol {
 
 	}
 
-	public Wol() {
+	public GoL() {
 
 		countx = (int) (Settings.winx / Settings.lwidth) - 1;
 		county = (int) (Settings.winy / Settings.lheight) - 1;
@@ -105,9 +115,22 @@ public class Wol {
 
 	private void initialize() {
 		frame = new JFrame();
+		frame.setTitle("G.o.L");
+		frame.setLayout(new BorderLayout());
 		frame.setSize(Settings.winx, Settings.winy);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
+
+		frame.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent evt) {
+				
+				Settings.winx=worldCanvas.getWidth();
+				Settings.winy=worldCanvas.getHeight();
+				Settings.lwidth = Settings.winx /80;
+				Settings.lheight = Settings.winy /80;
+
+			}
+		});
 
 		worldCanvas = new WolCanvas(world, Settings.winx, Settings.winy, countx, county);
 		frame.getContentPane().add(worldCanvas, BorderLayout.CENTER);
@@ -134,6 +157,7 @@ public class Wol {
 						world.inhabitants[x][y].kill();
 					}
 				}
+				worldCanvas.repaint();
 			}
 		});
 		panel.add(btn_kill);

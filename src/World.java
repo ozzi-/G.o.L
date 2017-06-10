@@ -17,29 +17,48 @@ public class World {
 		}
 		// bearRandom(10);
 
-		inhabitants[5][5].resurrect();
-		inhabitants[6][4].resurrect();
-		inhabitants[6][6].resurrect();
-		inhabitants[7][5].resurrect();
-		
-		inhabitants[10][10].resurrect();
-		inhabitants[11][10].resurrect();
-		inhabitants[12][10].resurrect();
-		inhabitants[12][9].resurrect();
-		inhabitants[11][8].resurrect();
-		
+		bearTub(6, 5);
+		bearBlinker(20, 20);
 
+		bearGlider(10, 8);
+
+		bearGlider(15, 8);
+
+	}
+
+	private void bearGlider(int x, int y) {
+		inhabitants[getBoundX(x + 1)][getBoundY(y)].resurrect();
+		inhabitants[getBoundX(x + 2)][getBoundY(y + 1)].resurrect();
+		inhabitants[getBoundX(x + 2)][getBoundY(y + 2)].resurrect();
+		inhabitants[getBoundX(x)][getBoundY(y + 2)].resurrect();
+		inhabitants[getBoundX(x + 1)][getBoundY(y + 2)].resurrect();
+	}
+
+	private void bearBlinker(int x, int y) {
+		inhabitants[getBoundX(x)][getBoundY(y)].resurrect();
+		inhabitants[getBoundX(x)][getBoundY(y + 1)].resurrect();
+		inhabitants[getBoundX(x)][getBoundY(y + 2)].resurrect();
+	}
+
+	private void bearTub(int x, int y) {
+		inhabitants[getBoundX(x - 1)][getBoundY(y)].resurrect();
+		inhabitants[getBoundX(x)][getBoundY(y - 1)].resurrect();
+		inhabitants[getBoundX(x)][getBoundY(y + 1)].resurrect();
+		inhabitants[getBoundX(x + 1)][getBoundY(y)].resurrect();
 	}
 
 	public void bear(int posx, int posy) {
 		inhabitants[posx][posy].resurrect();
 	}
-	public int getWorldWidth(){
+
+	public int getWorldWidth() {
 		return worldWidth;
 	}
-	public int getWorldHeight(){
+
+	public int getWorldHeight() {
 		return worldHeight;
 	}
+
 	public void bearRandom(int count) {
 		for (int i = 0; i < count; i++) {
 			int x = ThreadLocalRandom.current().nextInt(0, worldWidth);
@@ -48,21 +67,49 @@ public class World {
 		}
 	}
 
-	public Cell getBound(int x, int y) {
+	public int getBoundX(int x) {
+		if (x >= getWorldWidth()) {
+			x = 0;
+		}
+		if (x < 0) {
+			x = getWorldWidth() - 1;
+		}
+		return x;
+	}
 
-		if(x>=getWorldWidth()){
-			x=0;
+	public int getBoundY(int y) {
+		if (y >= getWorldHeight()) {
+			y = 0;
 		}
-		if(x<0){
-			x=getWorldWidth()-1;
+		if (y < 0) {
+			y = getWorldHeight() - 1;
 		}
-		if(y>=getWorldHeight()){
-			y=0;
+		return y;
+	}
+
+	public Cell getBound(int x, int y) {
+		if (x >= getWorldWidth()) {
+			x = 0;
 		}
-		if(y<0){
-			y=getWorldWidth()-1;
+		if (x < 0) {
+			x = getWorldWidth() - 1;
+		}
+		if (y >= getWorldHeight()) {
+			y = 0;
+		}
+		if (y < 0) {
+			y = getWorldWidth() - 1;
 		}
 		return inhabitants[x][y];
+	}
+
+	public void setWorldHeight(int worldHeight) {
+		this.worldHeight = worldHeight;
+	}
+
+	public void setWorldWidth(int worldWidth) {
+		this.worldWidth = worldWidth;
+
 	}
 
 }
