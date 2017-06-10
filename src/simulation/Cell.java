@@ -1,3 +1,4 @@
+package simulation;
 public class Cell {
 	private int posx;
 	private int posy;

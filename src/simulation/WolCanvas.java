@@ -1,3 +1,4 @@
+package simulation;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -11,7 +12,7 @@ public class WolCanvas extends JPanel {
 	int width, height, countx, county;
 	private World world;
 
-	WolCanvas(World world, int w, int h, int countx, int county) {
+	public WolCanvas(World world, int w, int h, int countx, int county) {
 		this.world = world;
 		setSize(width = w, height = h);
 		this.countx = countx;
@@ -32,7 +33,7 @@ public class WolCanvas extends JPanel {
 		Cell individual = null;
 		for (int x = 0; x < world.getWorldWidth(); x++) {
 			for (int y = 0; y < world.getWorldHeight(); y++) {
-				individual = world.inhabitants[x][y];
+				individual = world.getInhabitants()[x][y];
 				if (individual.isAlive()) {
 					g.setColor(black);
 				} else {

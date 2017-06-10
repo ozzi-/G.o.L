@@ -1,17 +1,18 @@
+package simulation;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class World {
 	private int worldWidth;
 	private int worldHeight;
-	Cell[][] inhabitants;
+	private Cell[][] inhabitants;
 
 	public World(int worldWidth, int worldHeight) {
 		this.worldWidth = worldWidth;
 		this.worldHeight = worldHeight;
-
 		inhabitants = new Cell[worldWidth][worldHeight];
 		for (int x = 0; x < worldWidth; x++) {
-			for (int y = 0; y < worldWidth; y++) {
+			for (int y = 0; y < worldHeight; y++) {
 				inhabitants[x][y] = new Cell(x, y);
 			}
 		}
@@ -98,7 +99,7 @@ public class World {
 			y = 0;
 		}
 		if (y < 0) {
-			y = getWorldWidth() - 1;
+			y = getWorldHeight() - 1;
 		}
 		return inhabitants[x][y];
 	}
@@ -109,7 +110,10 @@ public class World {
 
 	public void setWorldWidth(int worldWidth) {
 		this.worldWidth = worldWidth;
+	}
 
+	public Cell[][] getInhabitants() {
+		return inhabitants;
 	}
 
 }
