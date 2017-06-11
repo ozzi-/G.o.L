@@ -37,6 +37,7 @@ public class Cell {
 
 	public void kill() {
 		alive = false;
+		aliveNextRound=false;
 	}
 
 	public void killNextRound() {
