@@ -42,7 +42,11 @@ public class Simulation {
 
 			}
 		}
-		
+		for (int x = 0; x < world.getWorldWidth(); x++) {
+			for (int y = 0; y < world.getWorldHeight(); y++) {
+				world.getInhabitants()[x][y].liveRound();
+			}
+		}
 	}
 
 }

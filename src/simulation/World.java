@@ -6,6 +6,10 @@ public class World {
 	private int worldWidth;
 	private int worldHeight;
 	private Cell[][] inhabitants;
+	private boolean next;
+	private boolean running;
+	private long lastSimTime;
+	private long sleepTime;
 
 	public World(int worldWidth, int worldHeight) {
 		this.worldWidth = worldWidth;
@@ -114,6 +118,38 @@ public class World {
 
 	public Cell[][] getInhabitants() {
 		return inhabitants;
+	}
+
+	public boolean isNext() {
+		return next;
+	}
+
+	public void setNext(boolean next) {
+		this.next = next;
+	}
+
+	public long getLastSimTime() {
+		return lastSimTime;
+	}
+
+	public void setLastSimTime(long lastSimTime) {
+		this.lastSimTime = lastSimTime;
+	}
+
+	public long getSleepTime() {
+		return sleepTime;
+	}
+
+	public void setSleepTime(long sleepTime) {
+		this.sleepTime = sleepTime;
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 
 }
