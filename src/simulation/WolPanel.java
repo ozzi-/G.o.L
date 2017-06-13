@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import utils.GoLMouseActionHandler;
+import utils.GoLActionHandlers;
 
 public class WolPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -20,8 +20,8 @@ public class WolPanel extends JPanel {
 		setSize(width = w, height = h);
 		this.countx = countx;
 		this.county = county;
-		addMouseListener(new GoLMouseActionHandler(world, this));
 	}
+	
 	
 	public void repaintPanel(){
 		repaint();
@@ -51,5 +51,9 @@ public class WolPanel extends JPanel {
 							Settings.lwidth, Settings.lheight );
 			}
 		}
+	}
+
+	public void setGah(GoLActionHandlers gah) {
+		addMouseListener(gah.mouseListener());
 	}
 }

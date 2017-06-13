@@ -1,5 +1,6 @@
 package simulation;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class World {
@@ -21,26 +22,6 @@ public class World {
 		}
 	}
 
-	public void bearGlider(int x, int y) {
-		inhabitants[getBoundX(x + 1)][getBoundY(y)].resurrect();
-		inhabitants[getBoundX(x + 2)][getBoundY(y + 1)].resurrect();
-		inhabitants[getBoundX(x + 2)][getBoundY(y + 2)].resurrect();
-		inhabitants[getBoundX(x)][getBoundY(y + 2)].resurrect();
-		inhabitants[getBoundX(x + 1)][getBoundY(y + 2)].resurrect();
-	}
-
-	public void bearBlinker(int x, int y) {
-		inhabitants[getBoundX(x)][getBoundY(y)].resurrect();
-		inhabitants[getBoundX(x)][getBoundY(y + 1)].resurrect();
-		inhabitants[getBoundX(x)][getBoundY(y + 2)].resurrect();
-	}
-
-	public void bearTub(int x, int y) {
-		inhabitants[getBoundX(x - 1)][getBoundY(y)].resurrect();
-		inhabitants[getBoundX(x)][getBoundY(y - 1)].resurrect();
-		inhabitants[getBoundX(x)][getBoundY(y + 1)].resurrect();
-		inhabitants[getBoundX(x + 1)][getBoundY(y)].resurrect();
-	}
 
 	public void bear(int posx, int posy) {
 		inhabitants[posx][posy].resurrect();
@@ -132,6 +113,13 @@ public class World {
 
 	public void setRunning(boolean running) {
 		this.running = running;
+	}
+
+	public void bearCreature(Creature creature, int x, int y) {
+		ArrayList<Cell> cells = creature.getCells();
+		for (Cell cell : cells) {
+			bear(getBoundX(cell.getPosx()+x), getBoundY(cell.getPosy()+y));
+		}
 	}
 
 }

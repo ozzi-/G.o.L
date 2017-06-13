@@ -1,7 +1,9 @@
 package start;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
 
+import simulation.Creature;
 import simulation.Settings;
 import simulation.Simulation;
 import simulation.World;
@@ -16,23 +18,14 @@ public class GoL {
 	private static GoL window;
 	private static long sleepTime = 0;
 	private static long lastSimTime = 0;
+	private static ArrayList<Creature> creatureList;
 
 	public GoL() {
 		countx  = (int) (Settings.winx / Settings.lwidth) - 1;
 		county =  (int) (Settings.winy / Settings.lheight) - 1;
 		world = new World(countx, county);
 		
-		// bearRandom(10);
-
-		world.bearTub(6, 5);
-		
-		world.bearBlinker(20, 20);
-
-		world.bearGlider(10, 8);
-
-		world.bearGlider(15, 8);
-		
-		CreatureLoader a = new CreatureLoader();
+		creatureList = CreatureLoader.loadCreatures();
 		
 	}
 
@@ -41,7 +34,7 @@ public class GoL {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI.initialize(world, countx, county);
+					GUI.initialize(world, countx, county, creatureList);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

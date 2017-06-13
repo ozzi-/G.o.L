@@ -4,10 +4,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
+import simulation.Cell;
+import simulation.Creature;
 import simulation.Settings;
 import simulation.Simulation;
 import simulation.WolPanel;
@@ -16,6 +21,7 @@ import simulation.World;
 public class GoLActionHandlers {
 	private World world;
 	private WolPanel worldPanel;
+	private Creature pointerCreature;
 
 	public GoLActionHandlers(World world, WolPanel worldPanel) {
 		this.world = world;
@@ -27,6 +33,17 @@ public class GoLActionHandlers {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				world.bearRandom(50);
+				worldPanel.repaint();
+			}
+		};
+	}
+	
+	public ActionListener spawnCreature(Creature creature) {
+		return new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pointerCreature = creature;
 				worldPanel.repaint();
 			}
 		};
@@ -65,6 +82,42 @@ public class GoLActionHandlers {
 				world.setSleepTime(0);
 				Simulation.simulate(world);
 				GUI.paint();
+			}
+		};
+	}
+	
+	public MouseListener mouseListener(){
+		return new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e)) {
+					if(pointerCreature==null){
+						world.bear(e.getX() / Settings.lwidth, e.getY() / Settings.lheight);
+					}else{
+						world.bearCreature(pointerCreature, e.getX() / Settings.lwidth, e.getY() / Settings.lheight);						
+					}
+				} else if (SwingUtilities.isRightMouseButton(e)) {
+					Cell dyingCell = world.getInhabitants()[e.getX() / Settings.lwidth][e.getY() / Settings.lheight];
+					dyingCell.kill();
+				}
+				GUI.paint();			
 			}
 		};
 	}
