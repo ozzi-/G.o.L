@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import simulation.Settings;
 import simulation.Simulation;
 import simulation.World;
+import utils.CreatureLoader;
 import utils.GUI;
 
 public class GoL {
@@ -30,6 +31,8 @@ public class GoL {
 		world.bearGlider(10, 8);
 
 		world.bearGlider(15, 8);
+		
+		CreatureLoader a = new CreatureLoader();
 		
 	}
 
