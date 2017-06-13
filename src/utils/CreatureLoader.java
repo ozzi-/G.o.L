@@ -19,8 +19,10 @@ public class CreatureLoader {
 		try {
 			List<String> creatures = getResourceFiles("creatures");
 			for (String creature : creatures) {
-				InputStream resource = getResourceAsStream("creatures/" + creature);
-				cl.add(loadCreature(inputStreamToString(resource)));
+				if(creature.endsWith(".json")){
+					InputStream resource = getResourceAsStream("creatures/" + creature);
+					cl.add(loadCreature(inputStreamToString(resource)));					
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
