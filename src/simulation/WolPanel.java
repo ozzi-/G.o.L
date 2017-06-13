@@ -10,8 +10,8 @@ import utils.GoLMouseActionHandler;
 
 public class WolPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final Color grey = new Color(234, 234, 234);
-	private final Color black = new Color(0, 0, 0);
+	private final Color background = Settings.backgroundColor;
+	private final Color cell = Settings.cellColor;
 	int width, height, countx, county;
 	private World world;
 
@@ -42,9 +42,9 @@ public class WolPanel extends JPanel {
 			for (int y = 0; y < world.getWorldHeight(); y++) {
 				individual = world.getInhabitants()[x][y];
 				if (individual.isAlive()) {
-					g.setColor(black);
+					g.setColor(cell);
 				} else {
-					g.setColor(grey);
+					g.setColor(background);
 				}
 				g.fillRect(	individual.getPosx() * Settings.lwidth, 
 							individual.getPosy() * Settings.lheight,

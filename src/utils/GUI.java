@@ -35,11 +35,10 @@ public class GUI {
 				Settings.lheight = Settings.winx / Settings.creatureScale;
 			}
 		});
-		
+
 		worldPanel = new WolPanel(world, Settings.winx, Settings.winy, countx, county);
 		GoLActionHandlers gbl = new GoLActionHandlers(world, worldPanel);
-		
-		
+
 		frame.getContentPane().add(worldPanel, BorderLayout.CENTER);
 
 		JPanel panel = new JPanel();
@@ -55,7 +54,7 @@ public class GUI {
 		JButton btn_next = new JButton("Next");
 
 		JButton btn_togglePlay = new JButton("  Play  ");
-		btn_togglePlay.addActionListener(gbl.play(btn_next,btn_togglePlay));
+		btn_togglePlay.addActionListener(gbl.play(btn_next, btn_togglePlay));
 		panel.add(btn_togglePlay);
 
 		btn_next.addActionListener(gbl.next());
@@ -72,6 +71,9 @@ public class GUI {
 		panel.add(scb_simspeed);
 
 		frame.pack();
+	}
 
+	public static void paint() {
+		worldPanel.repaint();
 	}
 }

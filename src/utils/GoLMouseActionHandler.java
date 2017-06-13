@@ -20,6 +20,17 @@ public class GoLMouseActionHandler implements MouseListener {
 	}
 
 	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			world.bear(e.getX() / Settings.lwidth, e.getY() / Settings.lheight);
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			Cell dyingCell = world.getInhabitants()[e.getX() / Settings.lwidth][e.getY() / Settings.lheight];
+			dyingCell.kill();
+		}
+		panel.repaint();
+	}
+
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
@@ -34,16 +45,4 @@ public class GoLMouseActionHandler implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			world.bear(e.getX() / Settings.lwidth, e.getY() / Settings.lheight);
-		} else if (SwingUtilities.isRightMouseButton(e)) {
-			Cell dyingCell = world.getInhabitants()[e.getX() / Settings.lwidth][e.getY() / Settings.lheight];
-			dyingCell.kill();
-		}
-		panel.repaint();
-	}
-
 }

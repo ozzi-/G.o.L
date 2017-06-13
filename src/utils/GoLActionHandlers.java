@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import simulation.Settings;
+import simulation.Simulation;
 import simulation.WolPanel;
 import simulation.World;
 
@@ -60,9 +61,10 @@ public class GoLActionHandlers {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				world.setNext(true);
 				world.setLastSimTime(System.currentTimeMillis());
 				world.setSleepTime(0);
+				Simulation.simulate(world);
+				GUI.paint();
 			}
 		};
 	}
@@ -71,7 +73,7 @@ public class GoLActionHandlers {
 		return new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {
-				Settings.simTime = 1000 - (arg0.getValue() * 10);
+				Settings.simTime = 1000 - (arg0.getValue() * 11);
 				lbl_simspeed.setText("    Simulation Speed " + Settings.simTime);
 			}
 		};

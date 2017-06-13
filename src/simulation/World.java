@@ -6,7 +6,6 @@ public class World {
 	private int worldWidth;
 	private int worldHeight;
 	private Cell[][] inhabitants;
-	private boolean next;
 	private boolean running;
 	private long lastSimTime;
 	private long sleepTime;
@@ -20,18 +19,9 @@ public class World {
 				inhabitants[x][y] = new Cell(x, y);
 			}
 		}
-		// bearRandom(10);
-
-		bearTub(6, 5);
-		bearBlinker(20, 20);
-
-		bearGlider(10, 8);
-
-		bearGlider(15, 8);
-
 	}
 
-	private void bearGlider(int x, int y) {
+	public void bearGlider(int x, int y) {
 		inhabitants[getBoundX(x + 1)][getBoundY(y)].resurrect();
 		inhabitants[getBoundX(x + 2)][getBoundY(y + 1)].resurrect();
 		inhabitants[getBoundX(x + 2)][getBoundY(y + 2)].resurrect();
@@ -39,13 +29,13 @@ public class World {
 		inhabitants[getBoundX(x + 1)][getBoundY(y + 2)].resurrect();
 	}
 
-	private void bearBlinker(int x, int y) {
+	public void bearBlinker(int x, int y) {
 		inhabitants[getBoundX(x)][getBoundY(y)].resurrect();
 		inhabitants[getBoundX(x)][getBoundY(y + 1)].resurrect();
 		inhabitants[getBoundX(x)][getBoundY(y + 2)].resurrect();
 	}
 
-	private void bearTub(int x, int y) {
+	public void bearTub(int x, int y) {
 		inhabitants[getBoundX(x - 1)][getBoundY(y)].resurrect();
 		inhabitants[getBoundX(x)][getBoundY(y - 1)].resurrect();
 		inhabitants[getBoundX(x)][getBoundY(y + 1)].resurrect();
@@ -54,14 +44,6 @@ public class World {
 
 	public void bear(int posx, int posy) {
 		inhabitants[posx][posy].resurrect();
-	}
-
-	public int getWorldWidth() {
-		return worldWidth;
-	}
-
-	public int getWorldHeight() {
-		return worldHeight;
 	}
 
 	public void bearRandom(int count) {
@@ -107,6 +89,14 @@ public class World {
 		}
 		return inhabitants[x][y];
 	}
+	
+	public int getWorldWidth() {
+		return worldWidth;
+	}
+
+	public int getWorldHeight() {
+		return worldHeight;
+	}
 
 	public void setWorldHeight(int worldHeight) {
 		this.worldHeight = worldHeight;
@@ -118,14 +108,6 @@ public class World {
 
 	public Cell[][] getInhabitants() {
 		return inhabitants;
-	}
-
-	public boolean isNext() {
-		return next;
-	}
-
-	public void setNext(boolean next) {
-		this.next = next;
 	}
 
 	public long getLastSimTime() {
