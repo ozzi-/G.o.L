@@ -37,7 +37,7 @@ public class GoLActionHandlers {
 			}
 		};
 	}
-	
+
 	public ActionListener spawnCreature(final Creature creature) {
 		return new ActionListener() {
 
@@ -85,39 +85,42 @@ public class GoLActionHandlers {
 			}
 		};
 	}
-	
-	public MouseListener mouseListener(){
+
+	public MouseListener mouseListener() {
 		return new MouseListener() {
-			
+
 			@Override
-			public void mouseReleased(MouseEvent e) {				
+			public void mouseReleased(MouseEvent e) {
 			}
-			
+
 			@Override
-			public void mousePressed(MouseEvent e) {				
+			public void mousePressed(MouseEvent e) {
 			}
-			
+
 			@Override
-			public void mouseExited(MouseEvent e) {				
+			public void mouseExited(MouseEvent e) {
 			}
-			
+
 			@Override
-			public void mouseEntered(MouseEvent e) {				
+			public void mouseEntered(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				int x = e.getX() / Settings.creatureScale;
+				int y = e.getY() / Settings.creatureScale;
+
 				if (SwingUtilities.isLeftMouseButton(e)) {
-					if(pointerCreature==null){
-						world.bear(e.getX() / Settings.lwidth, e.getY() / Settings.lheight);
-					}else{
-						world.bearCreature(pointerCreature, e.getX() / Settings.lwidth, e.getY() / Settings.lheight);						
+					if (pointerCreature == null) {
+						world.bear(x, y);
+					} else {
+						world.bearCreature(pointerCreature, x, y);
 					}
 				} else if (SwingUtilities.isRightMouseButton(e)) {
-					Cell dyingCell = world.getInhabitants()[e.getX() / Settings.lwidth][e.getY() / Settings.lheight];
+					Cell dyingCell = world.getInhabitants()[x][y];
 					dyingCell.kill();
 				}
-				GUI.paint();			
+				GUI.paint();
 			}
 		};
 	}

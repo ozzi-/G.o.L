@@ -11,9 +11,9 @@ public class World {
 	private long lastSimTime;
 	private long sleepTime;
 
-	public World(int worldWidth, int worldHeight) {
-		this.worldWidth = worldWidth;
-		this.worldHeight = worldHeight;
+	public World(int cellsX, int cellsY) {
+		this.worldWidth = cellsX;
+		this.worldHeight = cellsY;
 		inhabitants = new Cell[worldWidth][worldHeight];
 		for (int x = 0; x < worldWidth; x++) {
 			for (int y = 0; y < worldHeight; y++) {
@@ -24,7 +24,7 @@ public class World {
 
 
 	public void bear(int posx, int posy) {
-		inhabitants[posx][posy].resurrect();
+		inhabitants[getBoundX(posx)][getBoundY(posy)].resurrect();
 	}
 
 	public void bearRandom(int count) {

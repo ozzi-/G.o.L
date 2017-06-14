@@ -46,9 +46,9 @@ public class WolPanel extends JPanel {
 				} else {
 					g.setColor(background);
 				}
-				g.fillRect(	individual.getPosx() * Settings.lwidth, 
-							individual.getPosy() * Settings.lheight,
-							Settings.lwidth, Settings.lheight );
+				g.fillRect(	individual.getPosx() * Settings.creatureScale, 
+							individual.getPosy() * Settings.creatureScale,
+							Settings.creatureScale, Settings.creatureScale);
 			}
 		}
 	}

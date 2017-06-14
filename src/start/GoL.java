@@ -21,12 +21,8 @@ public class GoL {
 	private static ArrayList<Creature> creatureList;
 
 	public GoL() {
-		countx  = (int) (Settings.winx / Settings.lwidth) - 1;
-		county =  (int) (Settings.winy / Settings.lheight) - 1;
-		world = new World(countx, county);
-		
+		world = new World(Settings.cellsX,Settings.cellsY);
 		creatureList = CreatureLoader.loadCreatures();
-		
 	}
 
 	public static void main(String[] args) throws InterruptedException {

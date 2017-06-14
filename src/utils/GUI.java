@@ -37,8 +37,9 @@ public class GUI {
 			public void componentResized(ComponentEvent evt) {
 				Settings.winx = worldPanel.getWidth();
 				Settings.winy = worldPanel.getHeight();
-				Settings.lwidth = Settings.winx / Settings.creatureScale;
-				Settings.lheight = Settings.winx / Settings.creatureScale;
+				int creatureScaleX = Settings.winx/Settings.cellsX;
+				int creatureScaleY = Settings.winy/Settings.cellsY;
+				Settings.creatureScale = creatureScaleX>creatureScaleY?creatureScaleY:creatureScaleX;
 			}
 		});
 
