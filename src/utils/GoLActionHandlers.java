@@ -152,11 +152,11 @@ public class GoLActionHandlers {
 
 				String userHomeFolder = System.getProperty("user.home");
 				System.out.println("Saving to: " + userHomeFolder);
-		        Calendar cal = Calendar.getInstance();
-		        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH-mmss");
-		        String strDate = sdf.format(cal.getTime());
-				File textFile = new File(userHomeFolder, "save_"+strDate+".world");
-				System.out.println("save_"+strDate+".world");
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH-mmss");
+				String strDate = sdf.format(cal.getTime());
+				File textFile = new File(userHomeFolder, "save_" + strDate + ".world");
+				System.out.println("save_" + strDate + ".world");
 				try {
 					BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
 					out.write("{ \"savename\":\"save\",\"cells\":[");
@@ -200,7 +200,7 @@ public class GoLActionHandlers {
 					world.killAll();
 					String json;
 					try {
-						json = readFile(selectedFile.getAbsolutePath(),Charset.defaultCharset());
+						json = readFile(selectedFile.getAbsolutePath(), Charset.defaultCharset());
 						JSONObject job = new JSONObject(json);
 						JSONArray cellsArr = job.getJSONArray("cells");
 						for (Object cell : cellsArr) {
@@ -214,6 +214,25 @@ public class GoLActionHandlers {
 					}
 					GUI.paint();
 				}
+			}
+		};
+	}
+
+	public ActionListener toggleGrid() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Settings.drawGrid = !Settings.drawGrid;
+				GUI.paint();
+			}
+		};
+	}
+
+	public ActionListener toggleInfinite() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				world.toggleInfinite();
 			}
 		};
 	}

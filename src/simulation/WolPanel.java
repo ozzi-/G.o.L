@@ -21,9 +21,8 @@ public class WolPanel extends JPanel {
 		this.countx = countx;
 		this.county = county;
 	}
-	
-	
-	public void repaintPanel(){
+
+	public void repaintPanel() {
 		repaint();
 	}
 
@@ -39,18 +38,36 @@ public class WolPanel extends JPanel {
 	public void paint(Graphics g) {
 		Cell individual = null;
 		for (int x = 0; x < world.getWorldWidth(); x++) {
+
 			for (int y = 0; y < world.getWorldHeight(); y++) {
 				individual = world.getInhabitants()[x][y];
+
 				if (individual.isAlive()) {
 					g.setColor(cell);
 				} else {
 					g.setColor(background);
 				}
-				g.fillRect(	individual.getPosx() * Settings.creatureScale, 
-							individual.getPosy() * Settings.creatureScale,
-							Settings.creatureScale, Settings.creatureScale);
+
+				g.fillRect(individual.getPosx() * Settings.creatureScale, individual.getPosy() * Settings.creatureScale,
+						Settings.creatureScale, Settings.creatureScale);
 			}
 		}
+
+		if (Settings.drawGrid) {
+			for (int x = 0; x <= world.getWorldWidth(); x++) {
+				g.setColor(Settings.cellColor);
+				g.drawLine(x * Settings.creatureScale, 0, x * Settings.creatureScale,
+						Settings.creatureScale * world.getWorldHeight());
+
+			}
+			for (int y = 0; y <= world.getWorldHeight(); y++) {
+				g.setColor(Settings.cellColor);
+				g.drawLine(0, y * Settings.creatureScale, Settings.creatureScale * world.getWorldWidth(),
+						y * Settings.creatureScale);
+
+			}
+		}
+
 	}
 
 	public void setGah(GoLActionHandlers gah) {

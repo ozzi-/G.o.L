@@ -10,10 +10,16 @@ public class World {
 	private boolean running;
 	private long lastSimTime;
 	private long sleepTime;
-
+	private boolean infinite;
+	private Cell dead;
+	
 	public World(int cellsX, int cellsY) {
 		this.worldWidth = cellsX;
 		this.worldHeight = cellsY;
+		dead = new Cell(1,1);
+		dead.kill();
+		
+		infinite=true;
 		inhabitants = new Cell[worldWidth][worldHeight];
 		for (int x = 0; x < worldWidth; x++) {
 			for (int y = 0; y < worldHeight; y++) {
@@ -21,7 +27,6 @@ public class World {
 			}
 		}
 	}
-
 
 	public void bear(int posx, int posy) {
 		inhabitants[getBoundX(posx)][getBoundY(posy)].resurrect();
@@ -56,6 +61,11 @@ public class World {
 	}
 
 	public Cell getBound(int x, int y) {
+		if(!infinite){
+			if(x >= getWorldWidth() || x < 0 || y >= getWorldHeight() || y < 0){
+				return dead;
+			}
+		}
 		if (x >= getWorldWidth()) {
 			x = 0;
 		}
@@ -122,13 +132,17 @@ public class World {
 		}
 	}
 
-
 	public void killAll() {
 		for (int x = 0; x < getWorldWidth(); x++) {
 			for (int y = 0; y < getWorldHeight(); y++) {
 				inhabitants[x][y].kill();
 			}
 		}		
+	}
+
+
+	public void toggleInfinite() {
+		infinite=!infinite;
 	}
 
 }

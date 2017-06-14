@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -91,6 +92,15 @@ public class GUI {
 		JButton btn_load = new JButton("  Load  ");
 		btn_load.addActionListener(gah.load());
 		controlPanel.add(btn_load);
+		
+        JCheckBox chkbtn_grid = new JCheckBox("  Grid  ");
+        chkbtn_grid.addActionListener(gah.toggleGrid());
+        controlPanel.add(chkbtn_grid);
+        
+        JCheckBox chkbtn_infinite = new JCheckBox("  Infinite Map  ");
+        chkbtn_infinite.addActionListener(gah.toggleInfinite());
+        controlPanel.add(chkbtn_infinite);
+        chkbtn_infinite.setSelected(true);
 		
 		JLabel lbl_simspeed = new JLabel("    Simulation Speed " + Settings.simTime);
 

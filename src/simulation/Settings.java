@@ -20,6 +20,8 @@ public class Settings {
 	/* Defines creature size and thus the grid dimensions ('level' size) */
 	public final static int cellsX = winx/5;
 	public final static int cellsY = winy/5;
+	
+	public static boolean drawGrid = false ;
 
 	/* Cosmetics */
 	public static Color backgroundColor = new Color(210, 210, 210);
@@ -31,6 +33,7 @@ public class Settings {
 	private final static int creatureScaleX = winx/cellsX;
 	private final static int creatureScaleY = winy/cellsY;
 	public static int creatureScale = creatureScaleX>creatureScaleY?creatureScaleY:creatureScaleX;
+	
 
 
 }
