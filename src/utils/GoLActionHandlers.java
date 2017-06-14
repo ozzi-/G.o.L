@@ -38,7 +38,7 @@ public class GoLActionHandlers {
 		};
 	}
 	
-	public ActionListener spawnCreature(Creature creature) {
+	public ActionListener spawnCreature(final Creature creature) {
 		return new ActionListener() {
 
 			@Override
@@ -63,7 +63,7 @@ public class GoLActionHandlers {
 		};
 	}
 
-	public ActionListener play(JButton btn_next, JButton btn_togglePlay) {
+	public ActionListener play(final JButton btn_next, final JButton btn_togglePlay) {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -122,7 +122,7 @@ public class GoLActionHandlers {
 		};
 	}
 
-	public AdjustmentListener simSpeed(JLabel lbl_simspeed) {
+	public AdjustmentListener simSpeed(final JLabel lbl_simspeed) {
 		return new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {

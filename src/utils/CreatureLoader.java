@@ -32,13 +32,13 @@ public class CreatureLoader {
 
 	private static Creature loadCreature(String json){
 		JSONObject job = new JSONObject(json);
-		JSONArray forms = job.getJSONArray("form");
 		Creature creature = new Creature(job.get("name").toString());
 	    creature.getName();
-		for (Object form : forms) {
-	        JSONArray formArray = (JSONArray) form;
-	        int x = (int)formArray.get(0);
-	        int y = (int)formArray.get(1);
+	    JSONArray formArr = job.getJSONArray("form");
+		for (Object form : formArr) {
+	        JSONArray formCoordinates = (JSONArray) form;
+	        int x = (Integer) formCoordinates.get(0);
+	        int y = (Integer) formCoordinates.get(1);
 	        creature.addCell(x,y);
 	    }
 		return creature;
