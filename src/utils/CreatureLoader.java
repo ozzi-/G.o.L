@@ -21,7 +21,12 @@ public class CreatureLoader {
 			for (String creature : creatures) {
 				if(creature.endsWith(".json")){
 					InputStream resource = getResourceAsStream("creatures/" + creature);
-					cl.add(loadCreature(inputStreamToString(resource)));					
+					Creature loadedCreature = loadCreature(inputStreamToString(resource));
+					if(loadedCreature!=null){
+						cl.add(loadedCreature);
+					}else{
+						System.out.println("could not load creature "+creature);						
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -31,17 +36,22 @@ public class CreatureLoader {
 	}
 
 	private static Creature loadCreature(String json){
-		JSONObject job = new JSONObject(json);
-		Creature creature = new Creature(job.get("name").toString());
-	    creature.getName();
-	    JSONArray formArr = job.getJSONArray("form");
-		for (Object form : formArr) {
-	        JSONArray formCoordinates = (JSONArray) form;
-	        int x = (Integer) formCoordinates.get(0);
-	        int y = (Integer) formCoordinates.get(1);
-	        creature.addCell(x,y);
-	    }
-		return creature;
+		try {
+			JSONObject job = new JSONObject(json);
+			Creature creature = new Creature(job.get("name").toString());
+		    creature.getName();
+		    JSONArray formArr = job.getJSONArray("form");
+			for (Object form : formArr) {
+		        JSONArray formCoordinates = (JSONArray) form;
+		        int x = (Integer) formCoordinates.get(0);
+		        int y = (Integer) formCoordinates.get(1);
+		        creature.addCell(x,y);
+		    }
+			return creature;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 	}
 
 	private static String inputStreamToString(InputStream is) {

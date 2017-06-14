@@ -122,4 +122,13 @@ public class World {
 		}
 	}
 
+
+	public void killAll() {
+		for (int x = 0; x < getWorldWidth(); x++) {
+			for (int y = 0; y < getWorldHeight(); y++) {
+				inhabitants[x][y].kill();
+			}
+		}		
+	}
+
 }

@@ -6,10 +6,24 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import simulation.Cell;
 import simulation.Creature;
@@ -53,11 +67,7 @@ public class GoLActionHandlers {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (int x = 0; x < world.getWorldWidth(); x++) {
-					for (int y = 0; y < world.getWorldHeight(); y++) {
-						world.getInhabitants()[x][y].kill();
-					}
-				}
+				world.killAll();
 				worldPanel.repaint();
 			}
 		};
@@ -131,6 +141,79 @@ public class GoLActionHandlers {
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {
 				Settings.simTime = 1000 - (arg0.getValue() * 11);
 				lbl_simspeed.setText("    Simulation Speed " + Settings.simTime);
+			}
+		};
+	}
+
+	public ActionListener save() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				String userHomeFolder = System.getProperty("user.home");
+				System.out.println("Saving to: " + userHomeFolder);
+		        Calendar cal = Calendar.getInstance();
+		        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH-mmss");
+		        String strDate = sdf.format(cal.getTime());
+				File textFile = new File(userHomeFolder, "save_"+strDate+".world");
+				System.out.println("save_"+strDate+".world");
+				try {
+					BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
+					out.write("{ \"savename\":\"save\",\"cells\":[");
+					Cell[][] cells = world.getInhabitants();
+					for (int x = 0; x < world.getWorldWidth(); x++) {
+						for (int y = 0; y < world.getWorldHeight(); y++) {
+							Cell cell = cells[x][y];
+							if (cell.isAlive()) {
+								out.write("[" + cell.getPosx() + "," + cell.getPosy() + "],");
+							}
+						}
+					}
+					out.write("] }");
+					out.close();
+				} catch (Exception e) {
+
+				}
+
+			}
+		};
+	}
+
+	static String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
+	}
+
+	public ActionListener load() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Saved Worlds", "world", "WORLD");
+				fileChooser.setFileFilter(filter);
+
+				fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+				int result = fileChooser.showOpenDialog(fileChooser);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					System.out.println("Loading: " + selectedFile.getAbsolutePath());
+					world.killAll();
+					String json;
+					try {
+						json = readFile(selectedFile.getAbsolutePath(),Charset.defaultCharset());
+						JSONObject job = new JSONObject(json);
+						JSONArray cellsArr = job.getJSONArray("cells");
+						for (Object cell : cellsArr) {
+							JSONArray formCoordinates = (JSONArray) cell;
+							int x = (Integer) formCoordinates.get(0);
+							int y = (Integer) formCoordinates.get(1);
+							world.bear(x, y);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					GUI.paint();
+				}
 			}
 		};
 	}

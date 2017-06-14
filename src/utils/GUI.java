@@ -83,7 +83,15 @@ public class GUI {
 
 		btn_next.addActionListener(gah.next());
 		controlPanel.add(btn_next);
+		
+		JButton btn_save = new JButton("  Save  ");
+		btn_save.addActionListener(gah.save());
+		controlPanel.add(btn_save);
 
+		JButton btn_load = new JButton("  Load  ");
+		btn_load.addActionListener(gah.load());
+		controlPanel.add(btn_load);
+		
 		JLabel lbl_simspeed = new JLabel("    Simulation Speed " + Settings.simTime);
 
 		JScrollBar scb_simspeed = new JScrollBar();
