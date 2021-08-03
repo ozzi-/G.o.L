@@ -17,8 +17,9 @@ public class Creature {
 		this.name = name;
 	}
 
-	public void addCell(int x, int y) {
+	public Creature addCell(int x, int y) {
 		cells.add(new Cell(x, y));
+		return this;
 	}
 
 	public ArrayList<Cell> getCells() {

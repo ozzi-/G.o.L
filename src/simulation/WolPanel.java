@@ -38,10 +38,8 @@ public class WolPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		Cell individual = null;
-
 		
 		for (int x = world.visibleWorldStartX; x < world.visibleWorldEndX; x++) {
-
 			for (int y = world.visibleWorldStartY; y < world.visibleWorldEndY; y++) {
 				individual = world.getInhabitants()[x][y];
 
@@ -50,10 +48,15 @@ public class WolPanel extends JPanel {
 				} else {
 					g.setColor(background);
 				}
-
 				g.fillRect((individual.getPosx()-world.visibleWorldStartX) * Settings.creatureScale, (individual.getPosy()-world.visibleWorldStartY) * Settings.creatureScale,
 						Settings.creatureScale, Settings.creatureScale);
+				g.setColor(Color.cyan);
+				
 			}
+		}
+		Creature pointerCreature = GoLActionHandlers.getPointerCreature();
+		for (Cell cell : pointerCreature.getCells()) {
+			g.fillRect((GoLActionHandlers.mouseX-world.visibleWorldStartX+cell.getPosx()) * Settings.creatureScale,(GoLActionHandlers.mouseY-world.visibleWorldStartY+cell.getPosy()) * Settings.creatureScale, Settings.creatureScale, Settings.creatureScale);
 		}
 
 		if (Settings.drawGrid) {
@@ -75,5 +78,6 @@ public class WolPanel extends JPanel {
 
 	public void setGah(GoLActionHandlers gah) {
 		addMouseListener(gah.mouseListener());
+		addMouseMotionListener(gah.mouseMotionListener());
 	}
 }

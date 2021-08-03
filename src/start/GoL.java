@@ -15,10 +15,12 @@ public class GoL {
 	private static int county;
 	@SuppressWarnings("unused")
 	private static GoL window;
-	private static long sleepTime = 0;
+	private static long sleepSimTime = 0;
 	private static long lastSimTime = 0;
-
+	private static int FPS = 60;
+	
 	public GoL() {
+	    System.setProperty("sun.java2d.opengl", "true");
 		IO.init();
 		world = new World(Settings.cellsX,Settings.cellsY);
 		CreatureLoader.loadCreatures();
@@ -36,18 +38,43 @@ public class GoL {
 				}
 			}
 		});
+		
+		long initialTime = System.nanoTime();
+		final double timeF = 1000000000 / FPS;
+		double deltaF = 0;
+		int frames = 0;
+		long timer = System.currentTimeMillis();
+		
 		while (true) {
+			long currentTime = System.nanoTime();
+			deltaF += (currentTime - initialTime) / timeF;
+			initialTime = currentTime;
+
+			
 			long executionSimTime=0;
 			long preSimTime = System.currentTimeMillis();
-			if (world.isRunning() && preSimTime > lastSimTime + sleepTime) {
+			if (world.isRunning() && preSimTime > lastSimTime + sleepSimTime) {
 				lastSimTime = System.currentTimeMillis();
-				GUI.paint();
 				Simulation.simulate(world);
 				executionSimTime = System.currentTimeMillis() - preSimTime;
 			}
-			sleepTime = Settings.simTime - executionSimTime;
-			sleepTime = sleepTime < 1 ? 1 : sleepTime;
-			Thread.sleep(20);
+			
+			if (deltaF >= 1) {
+				GUI.paint();
+				frames++;
+				deltaF--;
+			}
+
+			if (System.currentTimeMillis() - timer > 1000) {
+				System.out.println(String.format("FPS: %s", frames));
+				frames = 0;
+				timer += 1000;
+			}
+
+			sleepSimTime = Settings.simTime - executionSimTime;
+			sleepSimTime = sleepSimTime < 1 ? 1 : sleepSimTime;
+			
+			Thread.sleep(1);
 		}
 	}
 }

@@ -7,6 +7,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -40,7 +42,9 @@ import simulation.World;
 public class GoLActionHandlers {
 	private World world;
 	private WolPanel worldPanel;
-	private Creature pointerCreature;
+	private static Creature pointerCreature;
+	public static int mouseX;
+	public static int mouseY;
 
 	public GoLActionHandlers(World world, WolPanel worldPanel) {
 		this.world = world;
@@ -126,6 +130,7 @@ public class GoLActionHandlers {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				System.out.println("CLICK");
 				int x = e.getX() / Settings.creatureScale + world.visibleWorldStartX;
 				int y = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
 
@@ -139,9 +144,15 @@ public class GoLActionHandlers {
 					Cell dyingCell = world.getInhabitants()[x][y];
 					dyingCell.kill();
 				}
-				GUI.paint();
 			}
 		};
+	}
+	
+	public static Creature getPointerCreature() {
+		if(pointerCreature==null) {
+			 pointerCreature = new Creature("Cell").addCell(0,0);
+		}
+		return pointerCreature;
 	}
 
 	public AdjustmentListener simSpeed(final JLabel lbl_simspeed) {
@@ -277,6 +288,15 @@ public class GoLActionHandlers {
 					}
 				};
 				thread.start();
+			}
+		};
+	}
+
+	public MouseMotionListener mouseMotionListener() {
+		return new MouseMotionAdapter() {
+			public void mouseMoved(MouseEvent e){	        
+		        mouseX = e.getX() / Settings.creatureScale + world.visibleWorldStartX;	        
+		        mouseY = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
 			}
 		};
 	}

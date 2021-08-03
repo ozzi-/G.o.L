@@ -144,7 +144,9 @@ public class GUI {
 
 
 	public static void paint() {
-		worldPanel.repaint();
+		if (worldPanel!=null) {
+			worldPanel.repaint();			
+		}
 	}
 
 	public static void clearCreatureButtonBackgrounds() {
