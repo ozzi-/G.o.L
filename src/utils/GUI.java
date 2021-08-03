@@ -1,6 +1,7 @@
 package utils;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class GUI {
 	private static WolPanel worldPanel;
 	private static JPanel creaturePanel;
 	private static GoLActionHandlers gah;
+	private static ArrayList<JButton> creatureButtons = new ArrayList<JButton>();
 
 	public static JFrame getFrame() {
 		return frame;
@@ -72,10 +74,12 @@ public class GUI {
 		creaturePanel.add(btn_download);
 		
 		// TODO controls to turn creatures 
+		// TODO render to place creature in different color under current mouseX/Y
 		for (Creature creature : creatureList) {
-			JButton btn_test = new JButton(creature.getName());
-			btn_test.addActionListener(gah.spawnCreature(creature));
-			creaturePanel.add(btn_test);		
+			JButton creatureSpawnBtn = new JButton(creature.getName());
+			creatureSpawnBtn.addActionListener(gah.spawnCreature(creature,creatureSpawnBtn));
+			creaturePanel.add(creatureSpawnBtn);
+			creatureButtons.add(creatureSpawnBtn);
 		}
 		
 		JPanel controlPanel = new JPanel();
@@ -121,9 +125,9 @@ public class GUI {
         controlPanel.add(infiniteButton);
         controlPanel.add(wrapButton);
         controlPanel.add(boxedButton);
-        infiniteButton.addActionListener(gah.toggleInfinite(WorldType.INFINITE));
-        wrapButton.addActionListener(gah.toggleInfinite(WorldType.WRAPED));
-        boxedButton.addActionListener(gah.toggleInfinite(WorldType.BOXED));
+        infiniteButton.addActionListener(gah.worldType(WorldType.INFINITE));
+        wrapButton.addActionListener(gah.worldType(WorldType.WRAPED));
+        boxedButton.addActionListener(gah.worldType(WorldType.BOXED));
 
 		JLabel lbl_simspeed = new JLabel("    Simulation Speed " + Settings.simTime);
 
@@ -143,11 +147,21 @@ public class GUI {
 		worldPanel.repaint();
 	}
 
+	public static void clearCreatureButtonBackgrounds() {
+		for (JButton jButton : creatureButtons) {
+			jButton.setBackground(null);
+		}
+	}
 
 	public static void addCreatureButton(Creature creature) {
 		JButton btn_test = new JButton(creature.getName());
-		btn_test.addActionListener(gah.spawnCreature(creature));
+		btn_test.addActionListener(gah.spawnCreature(creature,btn_test));
+		
+		GUI.clearCreatureButtonBackgrounds();
+		btn_test.setBackground(Color.GREEN);
+		
 		creaturePanel.add(btn_test);
+		creatureButtons.add(btn_test);
 		frame.pack();
 	}
 }

@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -51,19 +52,22 @@ public class GoLActionHandlers {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				// TODO make clusters instead of totally random spawns
 				world.bearRandom(50);
 				worldPanel.repaint();
 			}
 		};
 	}
 
-	public ActionListener spawnCreature(final Creature creature) {
+	public ActionListener spawnCreature(final Creature creature, JButton creatureSpawnBtn) {
 		return new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				pointerCreature = creature;
 				worldPanel.repaint();
+				GUI.clearCreatureButtonBackgrounds();
+				creatureSpawnBtn.setBackground(Color.GREEN);
 			}
 		};
 	}
@@ -206,7 +210,6 @@ public class GoLActionHandlers {
 						json = readFile(selectedFile.getAbsolutePath(), Charset.defaultCharset());
 						JsonObject job = JsonParser.parseString(json).getAsJsonObject();
 						JsonArray formArr = job.get("cells").getAsJsonArray();
-						// TODO not a json array ex
 						for (JsonElement formCoordinates : formArr) {
 							int x = (Integer) formCoordinates.getAsJsonArray().get(0).getAsInt();
 							int y = (Integer) formCoordinates.getAsJsonArray().get(1).getAsInt();
@@ -231,7 +234,7 @@ public class GoLActionHandlers {
 		};
 	}
 
-	public ActionListener toggleInfinite(WorldType worldType) {
+	public ActionListener worldType(WorldType worldType) {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
