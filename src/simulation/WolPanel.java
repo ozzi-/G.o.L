@@ -15,6 +15,7 @@ public class WolPanel extends JPanel {
 	int width, height, countx, county;
 	private World world;
 
+
 	public WolPanel(World world, int w, int h, int countx, int county) {
 		this.world = world;
 		setSize(width = w, height = h);
@@ -37,9 +38,11 @@ public class WolPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		Cell individual = null;
-		for (int x = 0; x < world.getWorldWidth(); x++) {
 
-			for (int y = 0; y < world.getWorldHeight(); y++) {
+		
+		for (int x = world.visibleWorldStartX; x < world.visibleWorldEndX; x++) {
+
+			for (int y = world.visibleWorldStartY; y < world.visibleWorldEndY; y++) {
 				individual = world.getInhabitants()[x][y];
 
 				if (individual.isAlive()) {
@@ -48,7 +51,7 @@ public class WolPanel extends JPanel {
 					g.setColor(background);
 				}
 
-				g.fillRect(individual.getPosx() * Settings.creatureScale, individual.getPosy() * Settings.creatureScale,
+				g.fillRect((individual.getPosx()-world.visibleWorldStartX) * Settings.creatureScale, (individual.getPosy()-world.visibleWorldStartY) * Settings.creatureScale,
 						Settings.creatureScale, Settings.creatureScale);
 			}
 		}

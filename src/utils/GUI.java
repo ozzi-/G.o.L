@@ -6,11 +6,13 @@ import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -23,8 +25,13 @@ import simulation.World;
 public class GUI {
 	private static JFrame frame;
 	private static WolPanel worldPanel;
+	private static JPanel creaturePanel;
+	private static GoLActionHandlers gah;
 
-
+	public static JFrame getFrame() {
+		return frame;
+	}
+	
 	public static void initialize(World world, int countx, int county, ArrayList<Creature> creatureList) {
 		frame = new JFrame();
 		frame.setVisible(true);
@@ -45,20 +52,25 @@ public class GUI {
 		});
 
 		worldPanel = new WolPanel(world, Settings.winx, Settings.winy, countx, county);
-		GoLActionHandlers gah = new GoLActionHandlers(world, worldPanel);
+		gah = new GoLActionHandlers(world, worldPanel);
 		worldPanel.setGah(gah);
 		
 		frame.getContentPane().add(worldPanel, BorderLayout.CENTER);
 		
-		JPanel creaturePanel = new JPanel();
+		
+		creaturePanel = new JPanel();
 		creaturePanel.setLayout(new BoxLayout(creaturePanel, BoxLayout.PAGE_AXIS));
 		
         JScrollPane scrollPane = new JScrollPane (creaturePanel, 
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
-		frame.getContentPane().add(scrollPane, BorderLayout.EAST);        
+		frame.getContentPane().add(scrollPane, BorderLayout.EAST);
         
+		JButton btn_download = new JButton("Download new");
+		btn_download.addActionListener(gah.downloadCreature());
+		creaturePanel.add(btn_download);
+		
 		// TODO controls to turn creatures 
 		for (Creature creature : creatureList) {
 			JButton btn_test = new JButton(creature.getName());
@@ -97,11 +109,22 @@ public class GUI {
         chkbtn_grid.addActionListener(gah.toggleGrid());
         controlPanel.add(chkbtn_grid);
         
-        JCheckBox chkbtn_infinite = new JCheckBox("  Infinite Map  ");
-        chkbtn_infinite.addActionListener(gah.toggleInfinite());
-        controlPanel.add(chkbtn_infinite);
-        chkbtn_infinite.setSelected(true);
-		
+        JRadioButton infiniteButton = new JRadioButton("Infinite");
+        infiniteButton.setSelected(true);
+        JRadioButton wrapButton = new JRadioButton("Wrap");
+        JRadioButton boxedButton = new JRadioButton("Boxed");
+        
+        ButtonGroup group = new ButtonGroup();
+        group.add(infiniteButton);
+        group.add(wrapButton);
+        group.add(boxedButton);
+        controlPanel.add(infiniteButton);
+        controlPanel.add(wrapButton);
+        controlPanel.add(boxedButton);
+        infiniteButton.addActionListener(gah.toggleInfinite(WorldType.INFINITE));
+        wrapButton.addActionListener(gah.toggleInfinite(WorldType.WRAPED));
+        boxedButton.addActionListener(gah.toggleInfinite(WorldType.BOXED));
+
 		JLabel lbl_simspeed = new JLabel("    Simulation Speed " + Settings.simTime);
 
 		JScrollBar scb_simspeed = new JScrollBar();
@@ -115,9 +138,16 @@ public class GUI {
 		frame.pack();
 	}
 
+
 	public static void paint() {
 		worldPanel.repaint();
 	}
 
 
+	public static void addCreatureButton(Creature creature) {
+		JButton btn_test = new JButton(creature.getName());
+		btn_test.addActionListener(gah.spawnCreature(creature));
+		creaturePanel.add(btn_test);
+		frame.pack();
+	}
 }

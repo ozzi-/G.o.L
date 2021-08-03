@@ -1,4 +1,5 @@
 package simulation;
+
 public class Cell {
 	private int posx;
 	private int posy;
@@ -37,18 +38,18 @@ public class Cell {
 
 	public void kill() {
 		alive = false;
-		aliveNextRound=false;
+		aliveNextRound = false;
 	}
 
 	public void killNextRound() {
-		aliveNextRound=false;
+		aliveNextRound = false;
 	}
 
 	public void resurrectNextRound() {
-		aliveNextRound=true;		
+		aliveNextRound = true;
 	}
 
-	public void liveRound(){
+	public void liveRound() {
 		alive = aliveNextRound;
 	}
 

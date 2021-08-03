@@ -1,14 +1,13 @@
 package start;
 
 import java.awt.EventQueue;
-import java.util.ArrayList;
 
-import simulation.Creature;
 import simulation.Settings;
 import simulation.Simulation;
 import simulation.World;
 import utils.CreatureLoader;
 import utils.GUI;
+import utils.IO;
 
 public class GoL {
 	private static World world;
@@ -18,19 +17,20 @@ public class GoL {
 	private static GoL window;
 	private static long sleepTime = 0;
 	private static long lastSimTime = 0;
-	private static ArrayList<Creature> creatureList;
 
 	public GoL() {
+		IO.init();
 		world = new World(Settings.cellsX,Settings.cellsY);
-		creatureList = CreatureLoader.loadCreatures();
+		CreatureLoader.loadCreatures();
 	}
+	
 
 	public static void main(String[] args) throws InterruptedException {
 		window = new GoL();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI.initialize(world, countx, county, creatureList);
+					GUI.initialize(world, countx, county, CreatureLoader.getCreatureList());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

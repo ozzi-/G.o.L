@@ -14,16 +14,23 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.NoSuchElementException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import simulation.Cell;
 import simulation.Creature;
@@ -40,6 +47,7 @@ public class GoLActionHandlers {
 	public GoLActionHandlers(World world, WolPanel worldPanel) {
 		this.world = world;
 		this.worldPanel = worldPanel;
+
 	}
 
 	public ActionListener spawn() {
@@ -117,8 +125,8 @@ public class GoLActionHandlers {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int x = e.getX() / Settings.creatureScale;
-				int y = e.getY() / Settings.creatureScale;
+				int x = e.getX() / Settings.creatureScale + world.visibleWorldStartX;
+				int y = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
 
 				if (SwingUtilities.isLeftMouseButton(e)) {
 					if (pointerCreature == null) {
@@ -149,15 +157,14 @@ public class GoLActionHandlers {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
-				String userHomeFolder = System.getProperty("user.home");
-				System.out.println("Saving to: " + userHomeFolder);
+				System.out.println("Saving to: " + IO.userHomeFolder);
 				Calendar cal = Calendar.getInstance();
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH-mmss");
 				String strDate = sdf.format(cal.getTime());
-				File textFile = new File(userHomeFolder, "save_" + strDate + ".world");
+				File textFile = new File(IO.userHomeFolder, "save_" + strDate + ".world");
 				System.out.println("save_" + strDate + ".world");
 				try {
+					// TODO refactor to use json object instead of manual string building
 					BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
 					out.write("{ \"savename\":\"save\",\"cells\":[");
 					Cell[][] cells = world.getInhabitants();
@@ -192,7 +199,7 @@ public class GoLActionHandlers {
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Saved Worlds", "world", "WORLD");
 				fileChooser.setFileFilter(filter);
 
-				fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+				fileChooser.setCurrentDirectory(new File(IO.userHomeFolder));
 				int result = fileChooser.showOpenDialog(fileChooser);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
@@ -201,12 +208,12 @@ public class GoLActionHandlers {
 					String json;
 					try {
 						json = readFile(selectedFile.getAbsolutePath(), Charset.defaultCharset());
-						JSONObject job = new JSONObject(json);
-						JSONArray cellsArr = job.getJSONArray("cells");
-						for (Object cell : cellsArr) {
-							JSONArray formCoordinates = (JSONArray) cell;
-							int x = (Integer) formCoordinates.get(0);
-							int y = (Integer) formCoordinates.get(1);
+						JsonObject job = JsonParser.parseString(json).getAsJsonObject();
+						JsonArray formArr = job.get("cells").getAsJsonArray();
+						// TODO not a json array ex
+						for (JsonElement formCoordinates : formArr) {
+							int x = (Integer) formCoordinates.getAsJsonArray().get(0).getAsInt();
+							int y = (Integer) formCoordinates.getAsJsonArray().get(1).getAsInt();
 							world.bear(x, y);
 						}
 					} catch (IOException e) {
@@ -228,11 +235,52 @@ public class GoLActionHandlers {
 		};
 	}
 
-	public ActionListener toggleInfinite() {
+	public ActionListener toggleInfinite(WorldType worldType) {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				world.toggleInfinite();
+				world.setType(worldType);
+			}
+		};
+	}
+
+	public ActionListener downloadCreature() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Thread thread = new Thread(){
+					public void run(){
+						String creatureName = (String)JOptionPane.showInputDialog("Enter a pattern name from conwaylife.com\r\ni.E. \"b52bomber\"");
+						String res;
+						try {
+							res = NW.doGETRequest("https://www.conwaylife.com/patterns/"+creatureName+".cells");
+							Creature creature = CreatureLoader.loadFromCellsSyntax(res,creatureName);
+							ArrayList<Creature> creatureList = CreatureLoader.getCreatureList();
+							boolean exists = false;
+							for (Creature creatureEntry : creatureList) {
+								if (creatureEntry.getName().equals(creature.getName())) {
+									exists=true;
+								}
+							}
+							if(!exists) {
+								pointerCreature = creature;
+								GUI.addCreatureButton(creature);
+								
+								File file = new File(IO.userHomeFolder, "downloaded_"+creature.getName()+".creature");
+								BufferedWriter out = new BufferedWriter(new FileWriter(file));
+								out.write(creature.toJSON());
+								out.close();
+							}
+						} catch (IOException e) {
+							String exDesc = e.getCause()==null?e.getMessage():e.getCause().getMessage();
+						    JOptionPane.showMessageDialog(new JFrame(),exDesc,e.getClass().getName(),JOptionPane.ERROR_MESSAGE);     
+						} catch (NoSuchElementException e) {
+						    JOptionPane.showMessageDialog(new JFrame(),"Not found","404",JOptionPane.WARNING_MESSAGE);     
+						}
+					}
+				};
+				thread.start();
 			}
 		};
 	}

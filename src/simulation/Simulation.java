@@ -1,11 +1,24 @@
 package simulation;
 
+import utils.WorldType;
+
 public class Simulation {
 
 	public static void simulate(World world) {
-
-		for (int x = 0; x < world.getWorldWidth(); x++) {
-			for (int y = 0; y < world.getWorldHeight(); y++) {
+		int startX = 0;
+		int startY = 0;
+		int endX = world.getWorldWidth();
+		int endY = world.getWorldHeight();
+		
+		if(world.getWorldType() == WorldType.WRAPED) {
+			startX=world.visibleWorldStartX;
+			startY=world.visibleWorldStartY;
+			endX=world.visibleWorldEndX;
+			endY=world.visibleWorldEndY;
+		}
+		
+		for (int x = startX ; x < endX; x++) {
+			for (int y = startY; y < endY; y++) {
 
 				Cell c = world.getInhabitants()[x][y];
 				int aliveNeighbours = 0;
