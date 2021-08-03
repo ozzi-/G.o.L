@@ -43,11 +43,19 @@ public class World {
 		inhabitants[getBoundX(posx)][getBoundY(posy)].resurrect();
 	}
 
-	public void bearRandom(int count) {
-		for (int i = 0; i < count; i++) {
-			int x = ThreadLocalRandom.current().nextInt(0, worldWidth);
-			int y = ThreadLocalRandom.current().nextInt(0, worldHeight);
-			bear(x, y);
+	public void bearRandomClusters(int clusterCount) {
+		int clusterDistance = 20;
+		int clusterMaxSize = 500;
+		int clusterDivergence = 15;
+		for (int i = 0; i < clusterCount; i++) {
+			int clusterSize = ThreadLocalRandom.current().nextInt(2, clusterMaxSize);
+			int clusterX = ThreadLocalRandom.current().nextInt(visibleWorldStartX, visibleWorldEndX);
+			int clusterY = ThreadLocalRandom.current().nextInt(visibleWorldStartY, visibleWorldEndY);
+			for (int j = 0; j < clusterSize; j++) {
+				int x = ThreadLocalRandom.current().nextInt(clusterX-clusterDistance, clusterX+clusterDistance)+ThreadLocalRandom.current().nextInt(-clusterDivergence,clusterDivergence);
+				int y = ThreadLocalRandom.current().nextInt(clusterY-clusterDistance, clusterY+clusterDistance)+ThreadLocalRandom.current().nextInt(-clusterDivergence,clusterDivergence);
+				bear(x, y);
+			}
 		}
 	}
 	

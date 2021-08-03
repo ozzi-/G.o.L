@@ -56,8 +56,7 @@ public class GoLActionHandlers {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO make clusters instead of totally random spawns
-				world.bearRandom(50);
+				world.bearRandomClusters(15);
 				worldPanel.repaint();
 			}
 		};

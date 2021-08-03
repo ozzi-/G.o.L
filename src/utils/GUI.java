@@ -85,7 +85,7 @@ public class GUI {
 		JPanel controlPanel = new JPanel();
 		frame.getContentPane().add(controlPanel, BorderLayout.SOUTH);
 
-		JButton btn_spawn = new JButton("Spawn");
+		JButton btn_spawn = new JButton("Spawn Random");
 		btn_spawn.addActionListener(gah.spawn());
 		controlPanel.add(btn_spawn);
 
