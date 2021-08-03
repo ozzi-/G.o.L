@@ -118,19 +118,6 @@ public class GoLActionHandlers {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("CLICK");
 				int x = e.getX() / Settings.creatureScale + world.visibleWorldStartX;
 				int y = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
 
@@ -144,6 +131,19 @@ public class GoLActionHandlers {
 					Cell dyingCell = world.getInhabitants()[x][y];
 					dyingCell.kill();
 				}
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
 			}
 		};
 	}
