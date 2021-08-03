@@ -6,9 +6,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -25,7 +23,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -163,25 +160,24 @@ public class GoLActionHandlers {
 				String strDate = sdf.format(cal.getTime());
 				File textFile = new File(IO.userHomeFolder, "save_" + strDate + ".world");
 				System.out.println("save_" + strDate + ".world");
-				try {
-					// TODO refactor to use json object instead of manual string building
-					BufferedWriter out = new BufferedWriter(new FileWriter(textFile));
-					out.write("{ \"savename\":\"save\",\"cells\":[");
-					Cell[][] cells = world.getInhabitants();
-					for (int x = 0; x < world.getWorldWidth(); x++) {
-						for (int y = 0; y < world.getWorldHeight(); y++) {
-							Cell cell = cells[x][y];
-							if (cell.isAlive()) {
-								out.write("[" + cell.getPosx() + "," + cell.getPosy() + "],");
-							}
+				JsonObject saveJO = new JsonObject();
+				saveJO.addProperty("savename", "save");
+				JsonArray cellsJA = new JsonArray();
+
+				Cell[][] cells = world.getInhabitants();
+				for (int x = 0; x < world.getWorldWidth(); x++) {
+					for (int y = 0; y < world.getWorldHeight(); y++) {
+						Cell cell = cells[x][y];
+						if (cell.isAlive()) {
+							JsonArray cellJA = new JsonArray();
+							cellJA.add(cell.getPosx());
+							cellJA.add(cell.getPosy());
+							cellsJA.add(cellJA);
 						}
 					}
-					out.write("] }");
-					out.close();
-				} catch (Exception e) {
-
 				}
-
+				saveJO.add("cells", cellsJA);
+				IO.writeToFile(textFile, saveJO.toString());
 			}
 		};
 	}
@@ -266,11 +262,8 @@ public class GoLActionHandlers {
 							if(!exists) {
 								pointerCreature = creature;
 								GUI.addCreatureButton(creature);
-								
 								File file = new File(IO.userHomeFolder, "downloaded_"+creature.getName()+".creature");
-								BufferedWriter out = new BufferedWriter(new FileWriter(file));
-								out.write(creature.toJSON());
-								out.close();
+								IO.writeToFile(file, creature.toJSON());
 							}
 						} catch (IOException e) {
 							String exDesc = e.getCause()==null?e.getMessage():e.getCause().getMessage();

@@ -1,6 +1,8 @@
 package utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +19,17 @@ public class IO {
 		if (!userHomeFolderF.exists()){
 			userHomeFolderF.mkdirs();
 		}		
+	}
+	
+	public static void writeToFile(File file, String writeOut) {
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(writeOut);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	public static String readFileToString(String filePath) {
