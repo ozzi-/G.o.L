@@ -2,6 +2,7 @@ package utils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -34,26 +35,31 @@ public class GUI {
 		return frame;
 	}
 	
+	public static void setTitleFPS(int fps) {
+		frame.setTitle("G.o.L - FPS: "+fps);
+	}
+	
 	public static void initialize(World world, int countx, int county, ArrayList<Creature> creatureList) {
 		frame = new JFrame();
 		frame.setVisible(true);
 		frame.setTitle("G.o.L");
 		frame.getContentPane().setLayout(new BorderLayout());
-		frame.setSize(Settings.winx, Settings.winy);
+		frame.setSize(Settings.winX, Settings.winY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
-
+		frame.setMinimumSize(new Dimension(600,400));
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent evt) {
-				Settings.winx = worldPanel.getWidth();
-				Settings.winy = worldPanel.getHeight();
-				int creatureScaleX = Settings.winx/Settings.cellsX;
-				int creatureScaleY = Settings.winy/Settings.cellsY;
-				Settings.creatureScale = creatureScaleX>creatureScaleY?creatureScaleY:creatureScaleX;
+				Settings.winX = worldPanel.getWidth();
+				Settings.winY = worldPanel.getHeight();
+				int creatureScaleX = Settings.winX/Settings.cellsX;
+				int creatureScaleY = Settings.winY/Settings.cellsY;
+				Settings.cellScale = creatureScaleX>creatureScaleY?creatureScaleY:creatureScaleX;
+				Settings.cellScale = Settings.cellScale<1?1:Settings.cellScale;
 			}
 		});
 
-		worldPanel = new WolPanel(world, Settings.winx, Settings.winy, countx, county);
+		worldPanel = new WolPanel(world, Settings.winX, Settings.winY, countx, county);
 		gah = new GoLActionHandlers(world, worldPanel);
 		worldPanel.setGah(gah);
 		
@@ -138,6 +144,10 @@ public class GUI {
 
 		controlPanel.add(lbl_simspeed);
 		controlPanel.add(scb_simspeed);
+		
+		JButton btn_settings = new JButton("\u2699");
+		btn_settings.addActionListener(gah.settings());
+		controlPanel.add(btn_settings);
 
 		frame.pack();
 	}

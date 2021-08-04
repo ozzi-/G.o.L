@@ -17,11 +17,11 @@ public class GoL {
 	private static GoL window;
 	private static long sleepSimTime = 0;
 	private static long lastSimTime = 0;
-	private static int FPS = 60;
 	
 	public GoL() {
 	    System.setProperty("sun.java2d.opengl", "true");
 		IO.init();
+		Settings.loadFromJSON();
 		world = new World(Settings.cellsX,Settings.cellsY);
 		CreatureLoader.loadCreatures();
 	}
@@ -40,7 +40,7 @@ public class GoL {
 		});
 		
 		long initialTime = System.nanoTime();
-		final double timeF = 1000000000 / FPS;
+		final double timeF = 1000000000 / Settings.FPS;
 		double deltaF = 0;
 		int frames = 0;
 		long timer = System.currentTimeMillis();
@@ -66,7 +66,7 @@ public class GoL {
 			}
 
 			if (System.currentTimeMillis() - timer > 1000) {
-				System.out.println(String.format("FPS: %s", frames));
+				GUI.setTitleFPS(frames);
 				frames = 0;
 				timer += 1000;
 			}
