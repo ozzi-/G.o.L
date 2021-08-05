@@ -1,1 +1,3 @@
-![Screenshot](https://i.imgur.com/f5fnG9w.png)
+# Game of Life
+
+![Screenshot](https://i.imgur.com/9KZA4A8.png)
