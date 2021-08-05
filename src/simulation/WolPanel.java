@@ -29,7 +29,7 @@ public class WolPanel extends JPanel {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(Settings.winx, Settings.winy);
+		return new Dimension(Settings.winX, Settings.winY);
 	}
 
 	public void update(Graphics g) {
@@ -38,47 +38,59 @@ public class WolPanel extends JPanel {
 
 	public void paint(Graphics g) {
 		Cell individual = null;
+
+		// CLS
+		g.setColor(Color.black);
+		g.fillRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
 		
+		// Render world background
+		g.setColor(background);
+		Cell borderInhabitant = world.getInhabitants()[world.visibleWorldEndX][world.visibleWorldEndY];
+		int worldAbsPxEndX = (borderInhabitant.getPosx()-world.visibleWorldStartX) * Settings.cellScale;
+		int worldAbsPxEndY = (borderInhabitant.getPosy()-world.visibleWorldStartY) * Settings.cellScale;
+		g.fillRect(0, 0, worldAbsPxEndX, worldAbsPxEndY);
+		
+		// Render alive cells
 		for (int x = world.visibleWorldStartX; x < world.visibleWorldEndX; x++) {
 			for (int y = world.visibleWorldStartY; y < world.visibleWorldEndY; y++) {
 				individual = world.getInhabitants()[x][y];
-
 				if (individual.isAlive()) {
 					g.setColor(cell);
-				} else {
-					g.setColor(background);
+					g.fillRect((individual.getPosx()-world.visibleWorldStartX) * Settings.cellScale, (individual.getPosy()-world.visibleWorldStartY) * Settings.cellScale,
+							Settings.cellScale, Settings.cellScale);
 				}
-				g.fillRect((individual.getPosx()-world.visibleWorldStartX) * Settings.creatureScale, (individual.getPosy()-world.visibleWorldStartY) * Settings.creatureScale,
-						Settings.creatureScale, Settings.creatureScale);
-				g.setColor(Color.cyan);
 				
 			}
 		}
+		
+		// Render Mouse Pointer
+		g.setColor(Color.CYAN);
 		Creature pointerCreature = GoLActionHandlers.getPointerCreature();
 		for (Cell cell : pointerCreature.getCells()) {
 			int cellActualX = World.rotate(cell.getPosx(),cell.getPosy(),true);
 			int cellActualY = World.rotate(cell.getPosx(),cell.getPosy(),false);
 			
-			int x = (GoLActionHandlers.mouseX-world.visibleWorldStartX+cellActualX) * Settings.creatureScale;
-			int y = (GoLActionHandlers.mouseY-world.visibleWorldStartY+cellActualY) * Settings.creatureScale;
-			g.fillRect(x,y, Settings.creatureScale, Settings.creatureScale);
-		}
+			int x = (GoLActionHandlers.mouseX-world.visibleWorldStartX+cellActualX) * Settings.cellScale;
+			int y = (GoLActionHandlers.mouseY-world.visibleWorldStartY+cellActualY) * Settings.cellScale;
+			g.fillRect(x,y, Settings.cellScale, Settings.cellScale);
 
+		}
+		
+		// Render Grid
 		if (Settings.drawGrid) {
 			for (int x = 0; x <= world.getWorldWidth(); x++) {
 				g.setColor(Settings.cellColor);
-				g.drawLine(x * Settings.creatureScale, 0, x * Settings.creatureScale,
-						Settings.creatureScale * world.getWorldHeight());
+				g.drawLine(x * Settings.cellScale, 0, x * Settings.cellScale,
+						Settings.cellScale * world.getWorldHeight());
 
 			}
 			for (int y = 0; y <= world.getWorldHeight(); y++) {
 				g.setColor(Settings.cellColor);
-				g.drawLine(0, y * Settings.creatureScale, Settings.creatureScale * world.getWorldWidth(),
-						y * Settings.creatureScale);
+				g.drawLine(0, y * Settings.cellScale, Settings.cellScale * world.getWorldWidth(),
+						y * Settings.cellScale);
 
 			}
 		}
-
 	}
 	
 	

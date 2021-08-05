@@ -1,6 +1,7 @@
 package utils;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -118,8 +119,8 @@ public class GoLActionHandlers {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				int x = e.getX() / Settings.creatureScale + world.visibleWorldStartX;
-				int y = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
+				int x = e.getX() / Settings.cellScale + world.visibleWorldStartX;
+				int y = e.getY() / Settings.cellScale + world.visibleWorldStartY;
 
 				if (SwingUtilities.isLeftMouseButton(e)) {
 					if (pointerCreature == null) {
@@ -311,9 +312,27 @@ public class GoLActionHandlers {
 
 	public MouseMotionListener mouseMotionListener() {
 		return new MouseMotionAdapter() {
-			public void mouseMoved(MouseEvent e){	        
-		        mouseX = e.getX() / Settings.creatureScale + world.visibleWorldStartX;	        
-		        mouseY = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
+			public void mouseMoved(MouseEvent e){	 
+		        mouseX = e.getX() / Settings.cellScale + world.visibleWorldStartX;	        
+		        mouseY = e.getY() / Settings.cellScale + world.visibleWorldStartY;
+			}
+		};
+	}
+
+	public ActionListener settings() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File settingsFile = new File (Settings.settingsPath);
+				if(!settingsFile.exists()) {
+					IO.writeToFile(settingsFile, Settings.toJSON());
+				}
+				Desktop desktop = Desktop.getDesktop();
+				try {
+					desktop.open(settingsFile);
+				} catch (IOException ex) {
+					System.err.println("Error using Desktop API - "+ex.getMessage()+" - "+ex.getCause());
+				}				
 			}
 		};
 	}
