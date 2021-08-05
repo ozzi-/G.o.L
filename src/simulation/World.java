@@ -3,6 +3,7 @@ package simulation;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import utils.GoLActionHandlers;
 import utils.WorldType;
 
 public class World {
@@ -61,6 +62,26 @@ public class World {
 	
 	public WorldType getWorldType() {
 		return worldType;
+	}
+	
+	public static int rotate(int cellActualX,int cellActualY, boolean returnX) {
+		int cellTemp = cellActualY;
+		if(GoLActionHandlers.getCreatureDirection()==1) {
+			System.out.println(cellActualY);
+			cellActualY = cellActualX;
+			cellActualX = -cellTemp;
+			System.out.println(cellActualX);
+			System.out.println("-");
+		}
+		if(GoLActionHandlers.getCreatureDirection()==2) {
+			cellActualY = -cellActualY;
+			cellActualX = -cellActualX;
+		}
+		if(GoLActionHandlers.getCreatureDirection()==3) {
+			cellActualY = -cellActualX;
+			cellActualX = cellTemp;
+		}
+		return returnX?cellActualX:cellActualY;
 	}
 
 	public int getBoundX(int x) {
@@ -173,7 +194,9 @@ public class World {
 	public void bearCreature(Creature creature, int x, int y) {
 		ArrayList<Cell> cells = creature.getCells();
 		for (Cell cell : cells) {
-			bear(getBoundX(cell.getPosx()+x), getBoundY(cell.getPosy()+y));
+			int cellActualX = rotate(cell.getPosx(),cell.getPosy(),true);
+			int cellActualY = rotate(cell.getPosx(),cell.getPosy(),false);
+			bear(getBoundX(cellActualX+x), getBoundY(cellActualY+y));				
 		}
 	}
 

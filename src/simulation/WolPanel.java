@@ -56,7 +56,12 @@ public class WolPanel extends JPanel {
 		}
 		Creature pointerCreature = GoLActionHandlers.getPointerCreature();
 		for (Cell cell : pointerCreature.getCells()) {
-			g.fillRect((GoLActionHandlers.mouseX-world.visibleWorldStartX+cell.getPosx()) * Settings.creatureScale,(GoLActionHandlers.mouseY-world.visibleWorldStartY+cell.getPosy()) * Settings.creatureScale, Settings.creatureScale, Settings.creatureScale);
+			int cellActualX = World.rotate(cell.getPosx(),cell.getPosy(),true);
+			int cellActualY = World.rotate(cell.getPosx(),cell.getPosy(),false);
+			
+			int x = (GoLActionHandlers.mouseX-world.visibleWorldStartX+cellActualX) * Settings.creatureScale;
+			int y = (GoLActionHandlers.mouseY-world.visibleWorldStartY+cellActualY) * Settings.creatureScale;
+			g.fillRect(x,y, Settings.creatureScale, Settings.creatureScale);
 		}
 
 		if (Settings.drawGrid) {
@@ -75,6 +80,8 @@ public class WolPanel extends JPanel {
 		}
 
 	}
+	
+	
 
 	public void setGah(GoLActionHandlers gah) {
 		addMouseListener(gah.mouseListener());

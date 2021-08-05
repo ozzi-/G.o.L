@@ -2,6 +2,7 @@ package utils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class GUI {
 	private static JPanel creaturePanel;
 	private static GoLActionHandlers gah;
 	private static ArrayList<JButton> creatureButtons = new ArrayList<JButton>();
+	private static JButton btn_rotate;
+	private static Dimension buttonDimension = new Dimension(150,25);
 
 	public static JFrame getFrame() {
 		return frame;
@@ -68,17 +71,23 @@ public class GUI {
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		frame.getContentPane().add(scrollPane, BorderLayout.EAST);
-        
+		
 		JButton btn_download = new JButton("Download new");
+		btn_download.setMaximumSize(buttonDimension);
+		btn_download.setForeground(Color.RED);
 		btn_download.addActionListener(gah.downloadCreature());
 		creaturePanel.add(btn_download);
 		
-		// TODO controls to turn creatures 
-		// TODO render to place creature in different color under current mouseX/Y
+		btn_rotate = new JButton("");
+		updateRotateBtnLbl();
+		btn_rotate.addActionListener(gah.rotateCreature());
+		creaturePanel.add(btn_rotate);
+
 		for (Creature creature : creatureList) {
 			JButton creatureSpawnBtn = new JButton(creature.getName());
 			creatureSpawnBtn.addActionListener(gah.spawnCreature(creature,creatureSpawnBtn));
 			creaturePanel.add(creatureSpawnBtn);
+			creatureSpawnBtn.setMaximumSize(buttonDimension);
 			creatureButtons.add(creatureSpawnBtn);
 		}
 		
@@ -94,7 +103,7 @@ public class GUI {
 		controlPanel.add(btn_kill);
 		JButton btn_next = new JButton("Next");
 
-		JButton btn_togglePlay = new JButton("  Play  ");
+		JButton btn_togglePlay = new JButton("\u25B6");
 		btn_togglePlay.addActionListener(gah.play(btn_next, btn_togglePlay));
 		controlPanel.add(btn_togglePlay);
 
@@ -130,10 +139,10 @@ public class GUI {
         boxedButton.addActionListener(gah.worldType(WorldType.BOXED));
 
 		JLabel lbl_simspeed = new JLabel("    Simulation Speed " + Settings.simTime);
-
 		JScrollBar scb_simspeed = new JScrollBar();
 		scb_simspeed.setUnitIncrement(5);
 		scb_simspeed.setOrientation(JScrollBar.HORIZONTAL);
+		scb_simspeed.setPreferredSize(new Dimension(100,20));
 		scb_simspeed.addAdjustmentListener(gah.simSpeed(lbl_simspeed));
 
 		controlPanel.add(lbl_simspeed);
@@ -142,6 +151,9 @@ public class GUI {
 		frame.pack();
 	}
 
+	public static void updateRotateBtnLbl() {
+		btn_rotate.setText("Rotate Creature "+GoLActionHandlers.getCreatureDirectionAsUnicode());
+	}
 
 	public static void paint() {
 		if (worldPanel!=null) {
@@ -156,14 +168,15 @@ public class GUI {
 	}
 
 	public static void addCreatureButton(Creature creature) {
-		JButton btn_test = new JButton(creature.getName());
-		btn_test.addActionListener(gah.spawnCreature(creature,btn_test));
+		JButton creatureBtn = new JButton(creature.getName());
+		creatureBtn.addActionListener(gah.spawnCreature(creature,creatureBtn));
 		
 		GUI.clearCreatureButtonBackgrounds();
-		btn_test.setBackground(Color.GREEN);
-		
-		creaturePanel.add(btn_test);
-		creatureButtons.add(btn_test);
+		creatureBtn.setBackground(Color.GREEN);
+		creatureBtn.setMaximumSize(buttonDimension);
+
+		creaturePanel.add(creatureBtn);
+		creatureButtons.add(creatureBtn);
 		frame.pack();
 	}
 }

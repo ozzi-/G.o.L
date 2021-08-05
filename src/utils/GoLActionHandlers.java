@@ -45,6 +45,7 @@ public class GoLActionHandlers {
 	private static Creature pointerCreature;
 	public static int mouseX;
 	public static int mouseY;
+	private static int creatureDirection = 0;
 
 	public GoLActionHandlers(World world, WolPanel worldPanel) {
 		this.world = world;
@@ -91,7 +92,7 @@ public class GoLActionHandlers {
 			public void actionPerformed(ActionEvent arg0) {
 				world.setRunning(!world.isRunning());
 				btn_next.setEnabled(!world.isRunning());
-				btn_togglePlay.setText(world.isRunning() ? "Pause" : "  Play  ");
+				btn_togglePlay.setText(world.isRunning() ? "| |" : "\u25B6");
 			}
 		};
 	}
@@ -147,6 +148,21 @@ public class GoLActionHandlers {
 		};
 	}
 	
+
+	public static int getCreatureDirection() {
+		return creatureDirection;
+	}
+	
+	public static String getCreatureDirectionAsUnicode() {
+			int offset = creatureDirection==3?0:creatureDirection+1;
+			String unicBase="219"+String.valueOf(offset);
+			int unicVal =Integer.parseInt(unicBase,16);// it convert st into hex number.
+			char c[]=Character.toChars(unicVal);
+			return new String(c);
+	}
+	
+	
+	
 	public static Creature getPointerCreature() {
 		if(pointerCreature==null) {
 			 pointerCreature = new Creature("Cell").addCell(0,0);
@@ -158,8 +174,9 @@ public class GoLActionHandlers {
 		return new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {
-				Settings.simTime = 1000 - (arg0.getValue() * 11);
-				lbl_simspeed.setText("    Simulation Speed " + Settings.simTime);
+				int sliderVal = arg0.getValue();
+				Settings.simTime = (long) (Settings.defaultSimTime-(sliderVal*11.1));
+				lbl_simspeed.setText("    Simulation Speed " + String.format("%04d", Settings.simTime));
 			}
 		};
 	}
@@ -257,32 +274,33 @@ public class GoLActionHandlers {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
 				Thread thread = new Thread(){
 					public void run(){
 						String creatureName = (String)JOptionPane.showInputDialog("Enter a pattern name from conwaylife.com\r\ni.E. \"b52bomber\"");
-						String res;
-						try {
-							res = NW.doGETRequest("https://www.conwaylife.com/patterns/"+creatureName+".cells");
-							Creature creature = CreatureLoader.loadFromCellsSyntax(res,creatureName);
-							ArrayList<Creature> creatureList = CreatureLoader.getCreatureList();
-							boolean exists = false;
-							for (Creature creatureEntry : creatureList) {
-								if (creatureEntry.getName().equals(creature.getName())) {
-									exists=true;
+						if(creatureName!=null && creatureName.length()>0){
+							String res;
+							try {
+								res = NW.doGETRequest("https://www.conwaylife.com/patterns/"+creatureName+".cells");
+								Creature creature = CreatureLoader.loadFromCellsSyntax(res,creatureName);
+								ArrayList<Creature> creatureList = CreatureLoader.getCreatureList();
+								boolean exists = false;
+								for (Creature creatureEntry : creatureList) {
+									if (creatureEntry.getName().equals(creature.getName())) {
+										exists=true;
+									}
 								}
+								if(!exists) {
+									pointerCreature = creature;
+									GUI.addCreatureButton(creature);
+									File file = new File(IO.userHomeFolder, "downloaded_"+creature.getName()+".creature");
+									IO.writeToFile(file, creature.toJSON());
+								}
+							} catch (IOException e) {
+								String exDesc = e.getCause()==null?e.getMessage():e.getCause().getMessage();
+								JOptionPane.showMessageDialog(new JFrame(),exDesc,e.getClass().getName(),JOptionPane.ERROR_MESSAGE);     
+							} catch (NoSuchElementException e) {
+								JOptionPane.showMessageDialog(new JFrame(),"Not found","404",JOptionPane.WARNING_MESSAGE);     
 							}
-							if(!exists) {
-								pointerCreature = creature;
-								GUI.addCreatureButton(creature);
-								File file = new File(IO.userHomeFolder, "downloaded_"+creature.getName()+".creature");
-								IO.writeToFile(file, creature.toJSON());
-							}
-						} catch (IOException e) {
-							String exDesc = e.getCause()==null?e.getMessage():e.getCause().getMessage();
-						    JOptionPane.showMessageDialog(new JFrame(),exDesc,e.getClass().getName(),JOptionPane.ERROR_MESSAGE);     
-						} catch (NoSuchElementException e) {
-						    JOptionPane.showMessageDialog(new JFrame(),"Not found","404",JOptionPane.WARNING_MESSAGE);     
 						}
 					}
 				};
@@ -296,6 +314,16 @@ public class GoLActionHandlers {
 			public void mouseMoved(MouseEvent e){	        
 		        mouseX = e.getX() / Settings.creatureScale + world.visibleWorldStartX;	        
 		        mouseY = e.getY() / Settings.creatureScale + world.visibleWorldStartY;
+			}
+		};
+	}
+
+	public ActionListener rotateCreature() {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				creatureDirection = creatureDirection==3?0:++creatureDirection;
+				GUI.updateRotateBtnLbl();
 			}
 		};
 	}
