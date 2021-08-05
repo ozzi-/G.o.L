@@ -67,11 +67,8 @@ public class World {
 	public static int rotate(int cellActualX,int cellActualY, boolean returnX) {
 		int cellTemp = cellActualY;
 		if(GoLActionHandlers.getCreatureDirection()==1) {
-			System.out.println(cellActualY);
 			cellActualY = cellActualX;
 			cellActualX = -cellTemp;
-			System.out.println(cellActualX);
-			System.out.println("-");
 		}
 		if(GoLActionHandlers.getCreatureDirection()==2) {
 			cellActualY = -cellActualY;
